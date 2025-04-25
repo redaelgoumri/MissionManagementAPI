@@ -16,22 +16,30 @@ namespace MissionManagementAPI.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configure the Reservation entity
-            modelBuilder.HasDefaultSchema("missionmanagement");
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.ToTable("USERS");
+                entity.HasKey(u => u.CodeAgent); // 👈 important!
 
-            // Configure the ReservationStatusHistory entity
-            /*modelBuilder.Entity<ReservationStatusHistory>()
-            .HasOne(h => h.Reservation)
-            .WithMany()
-            .HasForeignKey(h => h.ReservationId);*/
+                entity.Property(u => u.Email).HasColumnName("EMAIL");
+                entity.Property(u => u.PasswordHash).HasColumnName("PASSWORDHASH");
+                entity.Property(u => u.CodeAgent).HasColumnName("CODEAGENT");
+                entity.Property(u => u.NomPrenomAgent).HasColumnName("NOMPRENOMAGENT");
+                entity.Property(u => u.Departement).HasColumnName("DEPARTEMENT");
+                entity.Property(u => u.Role).HasColumnName("ROLE");
+            });
+
+            modelBuilder.Entity<Reservation>().ToTable("RESERVATIONS");
+            modelBuilder.Entity<Passenger>().ToTable("PASSENGERS");
 
             modelBuilder.Entity<Passenger>()
-            .HasOne(p => p.Reservation)
-            .WithMany(r => r.Passengers)
-            .HasForeignKey(p => p.ReservationId);
+                .HasOne(p => p.Reservation)
+                .WithMany(r => r.Passengers)
+                .HasForeignKey(p => p.ReservationId);
 
-
+            base.OnModelCreating(modelBuilder);
         }
+
+
     }
 }

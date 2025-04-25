@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MissionManagementAPI.Application.Interfaces;
@@ -11,10 +12,13 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Oracle DbContext
-
-
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseInMemoryDatabase("TestDb"));
+    options.UseOracle(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+
+/*builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseInMemoryDatabase("TestDb"));*/
 
 
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();

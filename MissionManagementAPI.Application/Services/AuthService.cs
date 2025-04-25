@@ -22,10 +22,21 @@ namespace MissionManagementAPI.Application.Services
 
         public async Task<AuthResponseDto> LoginAsync(AuthRequestDto dto)
         {
-            var user = await _userRepository.GetByEmailAsync(dto.Email);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+            dto.Email = dto.Email.Trim().ToLower();
+            Console.WriteLine(BCrypt.Net.BCrypt.HashPassword("admin123"));
+            Console.WriteLine($"[DEBUG] Email: {dto.Email}");
+
+            var user = await _userRepository.GetByEmailAsync("r.elgoumri@involys.ma");
+            Console.WriteLine($"[DEBUG] User is null: {user == null}");
+
+            Console.WriteLine($"[DEBUG] PasswordHash: {user?.PasswordHash}");
+            Console.WriteLine($"[DEBUG] Password match: {(user != null && !string.IsNullOrEmpty(user.PasswordHash) ? BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash) : false)}");
+
+
+
+            if (user == null || string.IsNullOrEmpty(user.PasswordHash) || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
             {
-                throw new UnauthorizedAccessException("Invalid credentials");
+                throw new UnauthorizedAccessException("Invalid email or password");
             }
 
             var token = GenerateJwtToken(user);
@@ -37,6 +48,8 @@ namespace MissionManagementAPI.Application.Services
                 Role = user.Role
             };
         }
+
+
 
         private string GenerateJwtToken(User user)
         {

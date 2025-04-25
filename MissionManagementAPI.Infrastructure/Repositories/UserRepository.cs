@@ -16,9 +16,15 @@ namespace MissionManagementAPI.Infrastructure.Repositories
 
         public async Task<User> GetByEmailAsync(string email)
         {
+            var sql = "SELECT * FROM USERS WHERE LOWER(EMAIL) = :email";
+
             return await _context.Users
-                .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+                .FromSqlRaw(sql, new Oracle.ManagedDataAccess.Client.OracleParameter("email", email.ToLower()))
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
         }
+    
+
 
         public async Task<IEnumerable<User>> GetAllAsync()
         {

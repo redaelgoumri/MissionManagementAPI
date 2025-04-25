@@ -1,7 +1,10 @@
-﻿namespace MissionManagementAPI.Domain.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MissionManagementAPI.Domain.Entities
 {
     public class User
     {
+        [Key]
         public string CodeAgent { get; set; }   
         public string NomPrenomAgent { get; set; }
         public string Email { get; set; }        
